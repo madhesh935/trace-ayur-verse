@@ -13,12 +13,12 @@ export const Route = createFileRoute("/regulator/dashboard")({ component: Regula
 
 const nav: NavItem[] = [
   { label: "Dashboard", to: "/regulator/dashboard", icon: LayoutDashboard },
-  { label: "Violations", to: "/regulator/dashboard", icon: AlertTriangle, badge: "4" },
-  { label: "Sustainability Reports", to: "/regulator/dashboard", icon: TreePine },
-  { label: "Protected Zones", to: "/regulator/dashboard", icon: Shield },
-  { label: "Audit Logs", to: "/regulator/dashboard", icon: ScrollText },
-  { label: "Export Certifications", to: "/regulator/dashboard", icon: FileCheck2 },
-  { label: "Compliance Analytics", to: "/regulator/dashboard", icon: BarChart3 },
+  { label: "Violations", to: "/regulator/violations", icon: AlertTriangle, badge: "4" },
+  { label: "Sustainability Reports", to: "/regulator/sustainability", icon: TreePine },
+  { label: "Protected Zones", to: "/regulator/zones", icon: Shield },
+  { label: "Audit Logs", to: "/regulator/audit-logs", icon: ScrollText },
+  { label: "Export Certifications", to: "/regulator/export-certifications", icon: FileCheck2 },
+  { label: "Compliance Analytics", to: "/regulator/compliance", icon: BarChart3 },
 ];
 
 function RegulatorDashboard() {

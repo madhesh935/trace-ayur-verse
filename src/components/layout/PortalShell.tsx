@@ -24,9 +24,9 @@ export function PortalShell({ portalName, portalTagline, nav, user, children }: 
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   return (
-    <div className="min-h-screen flex bg-background">
+    <div className="min-h-screen flex bg-background/95">
       {/* Sidebar */}
-      <aside className="w-64 shrink-0 bg-sidebar text-sidebar-foreground flex flex-col fixed inset-y-0 left-0">
+      <aside className="w-64 m-4 rounded-3xl shrink-0 bg-sidebar/95 backdrop-blur-xl text-sidebar-foreground flex flex-col fixed inset-y-0 left-0 shadow-2xl border border-sidebar-border/50 overflow-hidden z-40">
         <div className="px-5 py-5 border-b border-sidebar-border">
           <Logo variant="light" />
         </div>
@@ -44,13 +44,13 @@ export function PortalShell({ portalName, portalTagline, nav, user, children }: 
               <Link
                 key={item.to}
                 to={item.to}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group ${
                   active
                     ? "bg-sidebar-primary text-sidebar-primary-foreground shadow-glow"
-                    : "text-sidebar-foreground/75 hover:bg-sidebar-accent hover:text-sidebar-foreground"
+                    : "text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground"
                 }`}
               >
-                <Icon className="size-4" />
+                <Icon className={`size-4 transition-transform duration-200 ${active ? "scale-110" : "group-hover:scale-110 group-hover:text-sidebar-primary"}`} />
                 <span className="flex-1">{item.label}</span>
                 {item.badge && (
                   <span className="text-[10px] bg-accent/20 text-accent px-1.5 py-0.5 rounded-full">
@@ -78,10 +78,10 @@ export function PortalShell({ portalName, portalTagline, nav, user, children }: 
       </aside>
 
       {/* Main */}
-      <div className="flex-1 ml-64 flex flex-col min-w-0">
-        <header className="h-16 border-b border-border bg-card/60 backdrop-blur-md sticky top-0 z-30 flex items-center px-6 gap-4">
-          <div className="flex-1 max-w-md relative">
-            <Search className="size-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+      <div className="flex-1 ml-[17rem] flex flex-col min-w-0">
+        <header className="h-20 border-b border-border/40 bg-background/40 backdrop-blur-xl sticky top-0 z-30 flex items-center px-8 gap-4 transition-all">
+          <div className="flex-1 max-w-md relative group">
+            <Search className="size-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors" />
             <input
               placeholder="Search batches, farmers, transactions..."
               className="w-full h-9 pl-9 pr-3 rounded-lg bg-muted/60 border border-transparent focus:border-ring focus:bg-card outline-none text-sm"
@@ -100,7 +100,7 @@ export function PortalShell({ portalName, portalTagline, nav, user, children }: 
             </button>
           </div>
         </header>
-        <main className="flex-1 p-6 lg:p-8">{children ?? <Outlet />}</main>
+        <main className="flex-1 p-8 lg:p-10 animate-in fade-in slide-in-from-bottom-4 duration-500">{children ?? <Outlet />}</main>
       </div>
     </div>
   );

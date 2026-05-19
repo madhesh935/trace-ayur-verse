@@ -25,7 +25,7 @@ export function StatCard({
     destructive: "from-destructive/15 to-destructive/0 text-destructive",
   };
   return (
-    <div className="bg-card rounded-2xl border border-border p-5 shadow-card relative overflow-hidden">
+    <div className="bg-card/70 backdrop-blur-xl rounded-[1.25rem] border border-border/60 p-5 shadow-card relative overflow-hidden transition-all duration-300 hover:shadow-glow hover:border-border">
       <div className={cn("absolute -top-8 -right-8 size-32 rounded-full bg-gradient-to-br blur-2xl opacity-60", tones[tone])} />
       <div className="flex items-start justify-between relative">
         <div>
@@ -56,7 +56,7 @@ export function Panel({
   className?: string;
 }) {
   return (
-    <div className={cn("bg-card rounded-2xl border border-border shadow-card", className)}>
+    <div className={cn("bg-card/70 backdrop-blur-xl rounded-[1.25rem] border border-border/60 shadow-card transition-all duration-300 hover:border-border", className)}>
       {(title || action) && (
         <div className="flex items-center justify-between p-5 border-b border-border">
           <div>

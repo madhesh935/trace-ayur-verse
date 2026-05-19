@@ -15,11 +15,9 @@ const nav: NavItem[] = [
   { label: "Dashboard", to: "/farmer/dashboard", icon: LayoutDashboard },
   { label: "New Collection", to: "/farmer/new-collection", icon: PlusCircle },
   { label: "My Collections", to: "/farmer/collections", icon: Leaf },
-  { label: "Harvest Reports", to: "/farmer/dashboard", icon: FileBarChart },
-  { label: "GPS Collection Map", to: "/farmer/dashboard", icon: Map },
-  { label: "Rewards & Incentives", to: "/farmer/dashboard", icon: Award },
-  { label: "Training Center", to: "/farmer/dashboard", icon: GraduationCap },
-  { label: "Settings", to: "/farmer/dashboard", icon: Settings },
+  { label: "Harvest Reports", to: "/farmer/harvest-reports", icon: FileBarChart },
+  { label: "GPS Collection Map", to: "/farmer/map", icon: Map },
+  { label: "Settings", to: "/farmer/settings", icon: Settings },
 ];
 
 const STEPS = ["Herb Details", "Photos", "GPS Location", "Environment", "Blockchain Preview", "Review"];
@@ -48,17 +46,18 @@ function NewCollection() {
       </div>
 
       {/* Stepper */}
-      <div className="bg-card border border-border rounded-2xl p-5 mb-6 shadow-card">
-        <div className="flex items-center gap-2 overflow-x-auto">
+      <div className="bg-card/80 backdrop-blur-md border border-border/60 rounded-[1.25rem] p-4 mb-6 shadow-sm overflow-hidden relative">
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-emerald/5" />
+        <div className="relative flex items-center justify-between gap-2 overflow-x-auto no-scrollbar">
           {STEPS.map((s, i) => (
-            <div key={s} className="flex items-center gap-2 shrink-0">
-              <div className={`size-8 rounded-full flex items-center justify-center text-xs font-bold ${
-                i < step ? "bg-emerald text-white" : i === step ? "gradient-hero text-white shadow-glow" : "bg-muted text-muted-foreground"
+            <div key={s} className="flex items-center gap-3 shrink-0 flex-1">
+              <div className={`size-9 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300 ${
+                i < step ? "bg-emerald text-white shadow-md shadow-emerald/20" : i === step ? "gradient-hero text-white shadow-glow ring-4 ring-primary/20" : "bg-muted text-muted-foreground border border-border"
               }`}>
                 {i < step ? <CheckCircle2 className="size-4" /> : i + 1}
               </div>
-              <div className={`text-xs font-medium ${i === step ? "text-foreground" : "text-muted-foreground"}`}>{s}</div>
-              {i < STEPS.length - 1 && <div className={`w-8 h-px ${i < step ? "bg-emerald" : "bg-border"}`} />}
+              <div className={`text-xs font-semibold whitespace-nowrap transition-colors ${i === step ? "text-foreground" : i < step ? "text-foreground/80" : "text-muted-foreground"}`}>{s}</div>
+              {i < STEPS.length - 1 && <div className={`flex-1 h-[2px] rounded-full mx-2 transition-colors duration-500 ${i < step ? "bg-emerald" : "bg-border/60"}`} />}
             </div>
           ))}
         </div>
@@ -102,14 +101,14 @@ function NewCollection() {
 
 function Field({ label, children, hint }: { label: string; children: React.ReactNode; hint?: string }) {
   return (
-    <div>
-      <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{label}</label>
-      <div className="mt-1.5">{children}</div>
-      {hint && <div className="text-xs text-muted-foreground mt-1">{hint}</div>}
+    <div className="flex flex-col">
+      <label className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground mb-1.5 ml-1">{label}</label>
+      {children}
+      {hint && <div className="text-[11px] text-muted-foreground mt-1.5 ml-1 flex items-center gap-1"><Sparkles className="size-3 text-emerald" /> {hint}</div>}
     </div>
   );
 }
-const inputCls = "w-full h-11 px-4 rounded-xl border border-border bg-card focus:border-primary focus:ring-2 focus:ring-primary/10 outline-none transition text-sm";
+const inputCls = "w-full h-11 px-4 rounded-xl border border-border/60 bg-muted/20 focus:bg-card focus:border-primary focus:ring-4 focus:ring-primary/10 hover:border-border outline-none transition-all text-sm font-medium text-foreground shadow-sm";
 
 function StepHerbDetails() {
   return (
@@ -153,24 +152,28 @@ function StepHerbDetails() {
           </select>
         </Field>
       </div>
-      <Field label="Collection Notes">
-        <textarea className="w-full p-3 rounded-xl border border-border bg-card focus:border-primary focus:ring-2 focus:ring-primary/10 outline-none transition text-sm" rows={3} defaultValue="Mature roots harvested from cultivated plot 4B. Soil dry-warm. Good visual quality." />
-      </Field>
-      <Field label="Sustainability Checklist" hint="Required for NMPB compliance">
-        <div className="space-y-2 mt-2">
-          {[
-            "Harvested within approved zone",
-            "Mother plants left undisturbed (min 30%)",
-            "No endangered species collected",
-            "Traditional method followed",
-          ].map((c) => (
-            <label key={c} className="flex items-center gap-3 p-3 rounded-lg bg-muted/40 cursor-pointer hover:bg-muted">
-              <input type="checkbox" defaultChecked className="size-4 rounded accent-primary" />
-              <span className="text-sm">{c}</span>
-            </label>
-          ))}
-        </div>
-      </Field>
+      <div className="mt-5">
+        <Field label="Collection Notes">
+          <textarea className="w-full p-4 rounded-xl border border-border/60 bg-muted/20 focus:bg-card focus:border-primary focus:ring-4 focus:ring-primary/10 hover:border-border outline-none transition-all text-sm font-medium shadow-sm resize-none" rows={3} defaultValue="Mature roots harvested from cultivated plot 4B. Soil dry-warm. Good visual quality." />
+        </Field>
+      </div>
+      <div className="mt-5">
+        <Field label="Sustainability Checklist" hint="Required for NMPB compliance scoring">
+          <div className="space-y-2 mt-2">
+            {[
+              "Harvested within approved zone",
+              "Mother plants left undisturbed (min 30%)",
+              "No endangered species collected",
+              "Traditional method followed",
+            ].map((c) => (
+              <label key={c} className="flex items-center gap-3 p-3.5 rounded-xl border border-border/50 bg-card hover:bg-muted/30 hover:border-primary/30 cursor-pointer transition-colors group shadow-sm">
+                <input type="checkbox" defaultChecked className="size-4 rounded accent-primary transition-transform group-active:scale-95" />
+                <span className="text-sm font-medium">{c}</span>
+              </label>
+            ))}
+          </div>
+        </Field>
+      </div>
     </Panel>
   );
 }

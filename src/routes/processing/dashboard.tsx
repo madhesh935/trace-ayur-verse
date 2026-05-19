@@ -13,14 +13,14 @@ export const Route = createFileRoute("/processing/dashboard")({ component: Proce
 
 const nav: NavItem[] = [
   { label: "Dashboard", to: "/processing/dashboard", icon: LayoutDashboard },
-  { label: "Incoming Batches", to: "/processing/dashboard", icon: Inbox, badge: "12" },
-  { label: "Batch Aggregation", to: "/processing/dashboard", icon: GitMerge },
-  { label: "Drying Operations", to: "/processing/dashboard", icon: Wind },
-  { label: "Grinding Operations", to: "/processing/dashboard", icon: Cog },
-  { label: "Packaging", to: "/processing/dashboard", icon: Package },
-  { label: "Shipment Tracking", to: "/processing/dashboard", icon: Truck },
-  { label: "Warehouse", to: "/processing/dashboard", icon: Warehouse },
-  { label: "Reports", to: "/processing/dashboard", icon: FileText },
+  { label: "Incoming Batches", to: "/processing/incoming", icon: Inbox, badge: "12" },
+  { label: "Batch Aggregation", to: "/processing/aggregation", icon: GitMerge },
+  { label: "Drying Operations", to: "/processing/drying", icon: Wind },
+  { label: "Grinding Operations", to: "/processing/grinding", icon: Cog },
+  { label: "Packaging", to: "/processing/packaging", icon: Package },
+  { label: "Shipment Tracking", to: "/processing/shipment", icon: Truck },
+  { label: "Warehouse", to: "/processing/warehouse", icon: Warehouse },
+  { label: "Reports", to: "/processing/reports", icon: FileText },
 ];
 
 const tempData = Array.from({ length: 24 }).map((_, i) => ({

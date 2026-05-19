@@ -12,13 +12,13 @@ export const Route = createFileRoute("/laboratory/dashboard")({ component: LabDa
 
 const nav: NavItem[] = [
   { label: "Dashboard", to: "/laboratory/dashboard", icon: LayoutDashboard },
-  { label: "Sample Intake", to: "/laboratory/dashboard", icon: ClipboardList, badge: "8" },
-  { label: "DNA Verification", to: "/laboratory/dashboard", icon: Dna },
-  { label: "Moisture Analysis", to: "/laboratory/dashboard", icon: Droplets },
-  { label: "Pesticide Analysis", to: "/laboratory/dashboard", icon: FlaskRound },
-  { label: "Certificate Uploads", to: "/laboratory/dashboard", icon: FileBadge },
-  { label: "Approved Batches", to: "/laboratory/dashboard", icon: CheckSquare },
-  { label: "Reports", to: "/laboratory/dashboard", icon: FileText },
+  { label: "Sample Intake", to: "/laboratory/intake", icon: ClipboardList, badge: "8" },
+  { label: "DNA Verification", to: "/laboratory/dna", icon: Dna },
+  { label: "Moisture Analysis", to: "/laboratory/moisture", icon: Droplets },
+  { label: "Pesticide Analysis", to: "/laboratory/pesticide", icon: FlaskRound },
+  { label: "Certificate Uploads", to: "/laboratory/certificates", icon: FileBadge },
+  { label: "Approved Batches", to: "/laboratory/approved", icon: CheckSquare },
+  { label: "Reports", to: "/laboratory/reports", icon: FileText },
 ];
 
 const moisture = BATCHES.slice(0, 8).map((b) => ({ id: b.id.slice(-5), pct: b.moisture, max: 12 }));
