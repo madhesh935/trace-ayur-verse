@@ -9,38 +9,153 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as RegulatorDashboardRouteImport } from './routes/regulator/dashboard'
+import { Route as ProcessingDashboardRouteImport } from './routes/processing/dashboard'
+import { Route as LaboratoryDashboardRouteImport } from './routes/laboratory/dashboard'
+import { Route as FarmerNewCollectionRouteImport } from './routes/farmer/new-collection'
+import { Route as FarmerDashboardRouteImport } from './routes/farmer/dashboard'
+import { Route as FarmerCollectionsRouteImport } from './routes/farmer/collections'
+import { Route as ConsumerDashboardRouteImport } from './routes/consumer/dashboard'
 
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RegulatorDashboardRoute = RegulatorDashboardRouteImport.update({
+  id: '/regulator/dashboard',
+  path: '/regulator/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProcessingDashboardRoute = ProcessingDashboardRouteImport.update({
+  id: '/processing/dashboard',
+  path: '/processing/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LaboratoryDashboardRoute = LaboratoryDashboardRouteImport.update({
+  id: '/laboratory/dashboard',
+  path: '/laboratory/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FarmerNewCollectionRoute = FarmerNewCollectionRouteImport.update({
+  id: '/farmer/new-collection',
+  path: '/farmer/new-collection',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FarmerDashboardRoute = FarmerDashboardRouteImport.update({
+  id: '/farmer/dashboard',
+  path: '/farmer/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FarmerCollectionsRoute = FarmerCollectionsRouteImport.update({
+  id: '/farmer/collections',
+  path: '/farmer/collections',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConsumerDashboardRoute = ConsumerDashboardRouteImport.update({
+  id: '/consumer/dashboard',
+  path: '/consumer/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/login': typeof LoginRoute
+  '/consumer/dashboard': typeof ConsumerDashboardRoute
+  '/farmer/collections': typeof FarmerCollectionsRoute
+  '/farmer/dashboard': typeof FarmerDashboardRoute
+  '/farmer/new-collection': typeof FarmerNewCollectionRoute
+  '/laboratory/dashboard': typeof LaboratoryDashboardRoute
+  '/processing/dashboard': typeof ProcessingDashboardRoute
+  '/regulator/dashboard': typeof RegulatorDashboardRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/login': typeof LoginRoute
+  '/consumer/dashboard': typeof ConsumerDashboardRoute
+  '/farmer/collections': typeof FarmerCollectionsRoute
+  '/farmer/dashboard': typeof FarmerDashboardRoute
+  '/farmer/new-collection': typeof FarmerNewCollectionRoute
+  '/laboratory/dashboard': typeof LaboratoryDashboardRoute
+  '/processing/dashboard': typeof ProcessingDashboardRoute
+  '/regulator/dashboard': typeof RegulatorDashboardRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/login': typeof LoginRoute
+  '/consumer/dashboard': typeof ConsumerDashboardRoute
+  '/farmer/collections': typeof FarmerCollectionsRoute
+  '/farmer/dashboard': typeof FarmerDashboardRoute
+  '/farmer/new-collection': typeof FarmerNewCollectionRoute
+  '/laboratory/dashboard': typeof LaboratoryDashboardRoute
+  '/processing/dashboard': typeof ProcessingDashboardRoute
+  '/regulator/dashboard': typeof RegulatorDashboardRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/login'
+    | '/consumer/dashboard'
+    | '/farmer/collections'
+    | '/farmer/dashboard'
+    | '/farmer/new-collection'
+    | '/laboratory/dashboard'
+    | '/processing/dashboard'
+    | '/regulator/dashboard'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/login'
+    | '/consumer/dashboard'
+    | '/farmer/collections'
+    | '/farmer/dashboard'
+    | '/farmer/new-collection'
+    | '/laboratory/dashboard'
+    | '/processing/dashboard'
+    | '/regulator/dashboard'
+  id:
+    | '__root__'
+    | '/'
+    | '/login'
+    | '/consumer/dashboard'
+    | '/farmer/collections'
+    | '/farmer/dashboard'
+    | '/farmer/new-collection'
+    | '/laboratory/dashboard'
+    | '/processing/dashboard'
+    | '/regulator/dashboard'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  LoginRoute: typeof LoginRoute
+  ConsumerDashboardRoute: typeof ConsumerDashboardRoute
+  FarmerCollectionsRoute: typeof FarmerCollectionsRoute
+  FarmerDashboardRoute: typeof FarmerDashboardRoute
+  FarmerNewCollectionRoute: typeof FarmerNewCollectionRoute
+  LaboratoryDashboardRoute: typeof LaboratoryDashboardRoute
+  ProcessingDashboardRoute: typeof ProcessingDashboardRoute
+  RegulatorDashboardRoute: typeof RegulatorDashboardRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,22 +163,69 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/regulator/dashboard': {
+      id: '/regulator/dashboard'
+      path: '/regulator/dashboard'
+      fullPath: '/regulator/dashboard'
+      preLoaderRoute: typeof RegulatorDashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/processing/dashboard': {
+      id: '/processing/dashboard'
+      path: '/processing/dashboard'
+      fullPath: '/processing/dashboard'
+      preLoaderRoute: typeof ProcessingDashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/laboratory/dashboard': {
+      id: '/laboratory/dashboard'
+      path: '/laboratory/dashboard'
+      fullPath: '/laboratory/dashboard'
+      preLoaderRoute: typeof LaboratoryDashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/farmer/new-collection': {
+      id: '/farmer/new-collection'
+      path: '/farmer/new-collection'
+      fullPath: '/farmer/new-collection'
+      preLoaderRoute: typeof FarmerNewCollectionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/farmer/dashboard': {
+      id: '/farmer/dashboard'
+      path: '/farmer/dashboard'
+      fullPath: '/farmer/dashboard'
+      preLoaderRoute: typeof FarmerDashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/farmer/collections': {
+      id: '/farmer/collections'
+      path: '/farmer/collections'
+      fullPath: '/farmer/collections'
+      preLoaderRoute: typeof FarmerCollectionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/consumer/dashboard': {
+      id: '/consumer/dashboard'
+      path: '/consumer/dashboard'
+      fullPath: '/consumer/dashboard'
+      preLoaderRoute: typeof ConsumerDashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  LoginRoute: LoginRoute,
+  ConsumerDashboardRoute: ConsumerDashboardRoute,
+  FarmerCollectionsRoute: FarmerCollectionsRoute,
+  FarmerDashboardRoute: FarmerDashboardRoute,
+  FarmerNewCollectionRoute: FarmerNewCollectionRoute,
+  LaboratoryDashboardRoute: LaboratoryDashboardRoute,
+  ProcessingDashboardRoute: ProcessingDashboardRoute,
+  RegulatorDashboardRoute: RegulatorDashboardRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
