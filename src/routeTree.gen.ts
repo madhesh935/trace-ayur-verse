@@ -17,6 +17,7 @@ import { Route as LaboratoryDashboardRouteImport } from './routes/laboratory/das
 import { Route as FarmerNewCollectionRouteImport } from './routes/farmer/new-collection'
 import { Route as FarmerDashboardRouteImport } from './routes/farmer/dashboard'
 import { Route as FarmerCollectionsRouteImport } from './routes/farmer/collections'
+import { Route as ConsumerDashboardRouteImport } from './routes/consumer/dashboard'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
@@ -58,10 +59,16 @@ const FarmerCollectionsRoute = FarmerCollectionsRouteImport.update({
   path: '/farmer/collections',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ConsumerDashboardRoute = ConsumerDashboardRouteImport.update({
+  id: '/consumer/dashboard',
+  path: '/consumer/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
+  '/consumer/dashboard': typeof ConsumerDashboardRoute
   '/farmer/collections': typeof FarmerCollectionsRoute
   '/farmer/dashboard': typeof FarmerDashboardRoute
   '/farmer/new-collection': typeof FarmerNewCollectionRoute
@@ -72,6 +79,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
+  '/consumer/dashboard': typeof ConsumerDashboardRoute
   '/farmer/collections': typeof FarmerCollectionsRoute
   '/farmer/dashboard': typeof FarmerDashboardRoute
   '/farmer/new-collection': typeof FarmerNewCollectionRoute
@@ -83,6 +91,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
+  '/consumer/dashboard': typeof ConsumerDashboardRoute
   '/farmer/collections': typeof FarmerCollectionsRoute
   '/farmer/dashboard': typeof FarmerDashboardRoute
   '/farmer/new-collection': typeof FarmerNewCollectionRoute
@@ -95,6 +104,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/login'
+    | '/consumer/dashboard'
     | '/farmer/collections'
     | '/farmer/dashboard'
     | '/farmer/new-collection'
@@ -105,6 +115,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/login'
+    | '/consumer/dashboard'
     | '/farmer/collections'
     | '/farmer/dashboard'
     | '/farmer/new-collection'
@@ -115,6 +126,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/login'
+    | '/consumer/dashboard'
     | '/farmer/collections'
     | '/farmer/dashboard'
     | '/farmer/new-collection'
@@ -126,6 +138,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   LoginRoute: typeof LoginRoute
+  ConsumerDashboardRoute: typeof ConsumerDashboardRoute
   FarmerCollectionsRoute: typeof FarmerCollectionsRoute
   FarmerDashboardRoute: typeof FarmerDashboardRoute
   FarmerNewCollectionRoute: typeof FarmerNewCollectionRoute
@@ -192,12 +205,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FarmerCollectionsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/consumer/dashboard': {
+      id: '/consumer/dashboard'
+      path: '/consumer/dashboard'
+      fullPath: '/consumer/dashboard'
+      preLoaderRoute: typeof ConsumerDashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   LoginRoute: LoginRoute,
+  ConsumerDashboardRoute: ConsumerDashboardRoute,
   FarmerCollectionsRoute: FarmerCollectionsRoute,
   FarmerDashboardRoute: FarmerDashboardRoute,
   FarmerNewCollectionRoute: FarmerNewCollectionRoute,
