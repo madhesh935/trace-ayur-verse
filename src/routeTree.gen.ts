@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ProcessingDashboardRouteImport } from './routes/processing/dashboard'
 import { Route as FarmerNewCollectionRouteImport } from './routes/farmer/new-collection'
 import { Route as FarmerDashboardRouteImport } from './routes/farmer/dashboard'
 import { Route as FarmerCollectionsRouteImport } from './routes/farmer/collections'
@@ -23,6 +24,11 @@ const LoginRoute = LoginRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProcessingDashboardRoute = ProcessingDashboardRouteImport.update({
+  id: '/processing/dashboard',
+  path: '/processing/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FarmerNewCollectionRoute = FarmerNewCollectionRouteImport.update({
@@ -47,6 +53,7 @@ export interface FileRoutesByFullPath {
   '/farmer/collections': typeof FarmerCollectionsRoute
   '/farmer/dashboard': typeof FarmerDashboardRoute
   '/farmer/new-collection': typeof FarmerNewCollectionRoute
+  '/processing/dashboard': typeof ProcessingDashboardRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -54,6 +61,7 @@ export interface FileRoutesByTo {
   '/farmer/collections': typeof FarmerCollectionsRoute
   '/farmer/dashboard': typeof FarmerDashboardRoute
   '/farmer/new-collection': typeof FarmerNewCollectionRoute
+  '/processing/dashboard': typeof ProcessingDashboardRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -62,6 +70,7 @@ export interface FileRoutesById {
   '/farmer/collections': typeof FarmerCollectionsRoute
   '/farmer/dashboard': typeof FarmerDashboardRoute
   '/farmer/new-collection': typeof FarmerNewCollectionRoute
+  '/processing/dashboard': typeof ProcessingDashboardRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -71,6 +80,7 @@ export interface FileRouteTypes {
     | '/farmer/collections'
     | '/farmer/dashboard'
     | '/farmer/new-collection'
+    | '/processing/dashboard'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -78,6 +88,7 @@ export interface FileRouteTypes {
     | '/farmer/collections'
     | '/farmer/dashboard'
     | '/farmer/new-collection'
+    | '/processing/dashboard'
   id:
     | '__root__'
     | '/'
@@ -85,6 +96,7 @@ export interface FileRouteTypes {
     | '/farmer/collections'
     | '/farmer/dashboard'
     | '/farmer/new-collection'
+    | '/processing/dashboard'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -93,6 +105,7 @@ export interface RootRouteChildren {
   FarmerCollectionsRoute: typeof FarmerCollectionsRoute
   FarmerDashboardRoute: typeof FarmerDashboardRoute
   FarmerNewCollectionRoute: typeof FarmerNewCollectionRoute
+  ProcessingDashboardRoute: typeof ProcessingDashboardRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -109,6 +122,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/processing/dashboard': {
+      id: '/processing/dashboard'
+      path: '/processing/dashboard'
+      fullPath: '/processing/dashboard'
+      preLoaderRoute: typeof ProcessingDashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/farmer/new-collection': {
@@ -141,6 +161,7 @@ const rootRouteChildren: RootRouteChildren = {
   FarmerCollectionsRoute: FarmerCollectionsRoute,
   FarmerDashboardRoute: FarmerDashboardRoute,
   FarmerNewCollectionRoute: FarmerNewCollectionRoute,
+  ProcessingDashboardRoute: ProcessingDashboardRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
