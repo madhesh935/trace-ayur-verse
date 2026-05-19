@@ -7,42 +7,44 @@ import {
 } from "lucide-react";
 import { BATCHES } from "@/lib/mock-data";
 import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis, RadialBar, RadialBarChart, PolarAngleAxis } from "recharts";
+import { useLang } from "@/lib/i18n";
 
 export const Route = createFileRoute("/laboratory/dashboard")({ component: LabDashboard });
 
 const nav: NavItem[] = [
-  { label: "Dashboard", to: "/laboratory/dashboard", icon: LayoutDashboard },
-  { label: "Sample Intake", to: "/laboratory/intake", icon: ClipboardList, badge: "8" },
-  { label: "DNA Verification", to: "/laboratory/dna", icon: Dna },
-  { label: "Moisture Analysis", to: "/laboratory/moisture", icon: Droplets },
-  { label: "Pesticide Analysis", to: "/laboratory/pesticide", icon: FlaskRound },
-  { label: "Certificate Uploads", to: "/laboratory/certificates", icon: FileBadge },
-  { label: "Approved Batches", to: "/laboratory/approved", icon: CheckSquare },
-  { label: "Reports", to: "/laboratory/reports", icon: FileText },
+  { label: "Dashboard", to: "/laboratory/dashboard", icon: LayoutDashboard, i18nKey: "nav.dashboard" },
+  { label: "Sample Intake", to: "/laboratory/intake", icon: ClipboardList, badge: "8", i18nKey: "nav.intake" },
+  { label: "DNA Verification", to: "/laboratory/dna", icon: Dna, i18nKey: "nav.dna" },
+  { label: "Moisture Analysis", to: "/laboratory/moisture", icon: Droplets, i18nKey: "nav.moisture" },
+  { label: "Pesticide Analysis", to: "/laboratory/pesticide", icon: FlaskRound, i18nKey: "nav.pesticide" },
+  { label: "Certificate Uploads", to: "/laboratory/certificates", icon: FileBadge, i18nKey: "nav.certificates" },
+  { label: "Approved Batches", to: "/laboratory/approved", icon: CheckSquare, i18nKey: "nav.approved" },
+  { label: "Reports", to: "/laboratory/reports", icon: FileText, i18nKey: "nav.reports" },
 ];
 
 const moisture = BATCHES.slice(0, 8).map((b) => ({ id: b.id.slice(-5), pct: b.moisture, max: 12 }));
 
 function LabDashboard() {
+  const { t } = useLang();
   return (
     <PortalShell portalName="Laboratory Portal" portalTagline="Quality assurance · NABL accredited" nav={nav} user={{ name: "Dr. Priya Iyer", role: "Senior Analyst · NABL-7821", initials: "PI" }}>
       <div className="flex items-end justify-between mb-6 flex-wrap gap-3">
         <div>
-          <h1 className="text-2xl font-bold font-display">Lab Operations</h1>
+          <h1 className="text-2xl font-bold font-display">{t("lab.title")}</h1>
           <p className="text-sm text-muted-foreground">Bengaluru NABL Lab · 42 samples in queue · 18 analysts on shift</p>
         </div>
         <Badge tone="info"><Sparkles className="size-3" /> AI-assisted DNA matching enabled</Badge>
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <StatCard label="Pending Samples" value="42" icon={Clock} tone="saffron" hint="Avg wait: 4h 22m" />
-        <StatCard label="Approved Today" value="86" delta="+12% vs avg" icon={CheckCircle2} tone="emerald" />
-        <StatCard label="Rejected (week)" value="3" icon={X} tone="destructive" hint="2 moisture · 1 species mismatch" />
-        <StatCard label="Quality Score" value="97.2" delta="↑ 1.8 pts" icon={ShieldCheck} tone="primary" />
+        <StatCard label={t("lab.pending_samples")} value="42" icon={Clock} tone="saffron" hint="Avg wait: 4h 22m" />
+        <StatCard label={t("lab.approved_today")} value="86" delta="+12% vs avg" icon={CheckCircle2} tone="emerald" />
+        <StatCard label={t("lab.rejected_week")} value="3" icon={X} tone="destructive" hint="2 moisture · 1 species mismatch" />
+        <StatCard label={t("lab.quality_score")} value="97.2" delta="↑ 1.8 pts" icon={ShieldCheck} tone="primary" />
       </div>
 
       <div className="grid lg:grid-cols-3 gap-5">
-        <Panel title="DNA Barcode Verification" subtitle="Live comparison: AYT-ASH-02418" className="lg:col-span-2">
+        <Panel title={t("lab.dna_barcode")} subtitle="Live comparison: AYT-ASH-02418" className="lg:col-span-2">
           <div className="grid sm:grid-cols-2 gap-4 mb-4">
             <div>
               <div className="text-xs text-muted-foreground font-semibold uppercase tracking-wider mb-2">Reference · Withania somnifera</div>
@@ -57,7 +59,7 @@ function LabDashboard() {
             <div className="flex items-center gap-3">
               <Microscope className="size-5 text-emerald" />
               <div>
-                <div className="font-semibold text-sm">Authentic match</div>
+                <div className="font-semibold text-sm">{t("consumer.authentic_match")}</div>
                 <div className="text-xs text-muted-foreground">ITS2 + rbcL markers · No adulterant DNA detected</div>
               </div>
             </div>
@@ -68,29 +70,46 @@ function LabDashboard() {
           </div>
         </Panel>
 
-        <Panel title="Quality Compliance" subtitle="Past 30 days">
-          <div className="h-48">
-            <ResponsiveContainer>
-              <RadialBarChart innerRadius="50%" outerRadius="100%" data={[{ name: "score", value: 97.2, fill: "oklch(0.68 0.17 155)" }]} startAngle={90} endAngle={-270}>
+        <Panel title={t("lab.quality_compliance")} subtitle="Past 30 days">
+          {/* Donut chart with properly centered score overlay */}
+          <div className="relative h-44 flex items-center justify-center">
+            <ResponsiveContainer width="100%" height="100%">
+              <RadialBarChart
+                innerRadius="62%"
+                outerRadius="100%"
+                data={[{ name: "score", value: 97.2, fill: "oklch(0.68 0.17 155)" }]}
+                startAngle={90}
+                endAngle={-270}
+              >
                 <PolarAngleAxis type="number" domain={[0, 100]} tick={false} />
-                <RadialBar background dataKey="value" cornerRadius={20} />
+                <RadialBar background={{ fill: "oklch(0.95 0.015 100)" }} dataKey="value" cornerRadius={12} />
               </RadialBarChart>
             </ResponsiveContainer>
-            <div className="-mt-32 text-center">
-              <div className="text-4xl font-bold font-display">97.2</div>
-              <div className="text-xs text-muted-foreground">of 100</div>
+            {/* Absolutely centered text — never clipped */}
+            <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+              <div className="text-3xl font-bold font-display text-foreground leading-none">97.2</div>
+              <div className="text-xs text-muted-foreground mt-1 font-medium">of 100</div>
+              <div className="mt-1.5 text-[10px] font-bold text-emerald uppercase tracking-wider">Excellent</div>
             </div>
           </div>
-          <div className="grid grid-cols-3 gap-2 text-center mt-4">
-            <div><div className="text-emerald font-bold">98%</div><div className="text-[10px] text-muted-foreground">DNA</div></div>
-            <div><div className="text-emerald font-bold">96%</div><div className="text-[10px] text-muted-foreground">Moisture</div></div>
-            <div><div className="text-emerald font-bold">99%</div><div className="text-[10px] text-muted-foreground">Pesticide</div></div>
+          {/* Sub-metrics */}
+          <div className="grid grid-cols-3 gap-2 mt-3">
+            {[
+              { label: "DNA Auth", value: "98%", color: "text-emerald", bg: "bg-emerald/10 border-emerald/20" },
+              { label: "Moisture", value: "96%", color: "text-primary", bg: "bg-primary/10 border-primary/20" },
+              { label: "Pesticide", value: "99%", color: "text-emerald", bg: "bg-emerald/10 border-emerald/20" },
+            ].map((m) => (
+              <div key={m.label} className={`rounded-xl border p-2.5 text-center ${m.bg}`}>
+                <div className={`text-lg font-bold font-display ${m.color}`}>{m.value}</div>
+                <div className="text-[10px] text-muted-foreground font-medium mt-0.5">{m.label}</div>
+              </div>
+            ))}
           </div>
         </Panel>
       </div>
 
       <div className="grid lg:grid-cols-3 gap-5 mt-5">
-        <Panel title="Moisture Analysis Queue" subtitle="Threshold: ≤ 12%" className="lg:col-span-2">
+        <Panel title={t("lab.moisture_queue")} subtitle="Threshold: ≤ 12%" className="lg:col-span-2">
           <div className="h-56">
             <ResponsiveContainer>
               <BarChart data={moisture}>
@@ -102,7 +121,7 @@ function LabDashboard() {
             </ResponsiveContainer>
           </div>
         </Panel>
-        <Panel title="Approval Workflow">
+        <Panel title={t("lab.approval_workflow")}>
           <div className="space-y-2">
             {BATCHES.slice(0, 5).map((b, i) => (
               <div key={b.id} className="p-3 rounded-lg border border-border hover:bg-muted/40">
@@ -123,7 +142,7 @@ function LabDashboard() {
         </Panel>
       </div>
 
-      <Panel title="Recent Certificate Uploads" subtitle="Hashed to IPFS, anchored on-chain" className="mt-5 !p-0">
+      <Panel title={t("lab.recent_certs")} subtitle="Hashed to IPFS, anchored on-chain" className="mt-5 !p-0">
         <div className="divide-y divide-border">
           {BATCHES.slice(0, 5).map((b) => (
             <div key={b.id} className="flex items-center gap-4 p-4 hover:bg-muted/40">

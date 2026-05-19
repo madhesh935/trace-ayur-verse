@@ -8,16 +8,17 @@ import {
 } from "lucide-react";
 import { BATCHES, REGIONS } from "@/lib/mock-data";
 import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { useLang } from "@/lib/i18n";
 
 export const Route = createFileRoute("/farmer/dashboard")({ component: FarmerDashboard });
 
 const nav: NavItem[] = [
-  { label: "Dashboard", to: "/farmer/dashboard", icon: LayoutDashboard },
-  { label: "New Collection", to: "/farmer/new-collection", icon: PlusCircle, badge: "+" },
-  { label: "My Collections", to: "/farmer/collections", icon: Leaf },
-  { label: "Harvest Reports", to: "/farmer/harvest-reports", icon: FileBarChart },
-  { label: "GPS Collection Map", to: "/farmer/map", icon: Map },
-  { label: "Settings", to: "/farmer/settings", icon: Settings },
+  { label: "Dashboard", to: "/farmer/dashboard", icon: LayoutDashboard, i18nKey: "nav.dashboard" },
+  { label: "New Collection", to: "/farmer/new-collection", icon: PlusCircle, badge: "+", i18nKey: "nav.new_collection" },
+  { label: "My Collections", to: "/farmer/collections", icon: Leaf, i18nKey: "nav.collections" },
+  { label: "Harvest Reports", to: "/farmer/harvest-reports", icon: FileBarChart, i18nKey: "nav.reports" },
+  { label: "GPS Collection Map", to: "/farmer/map", icon: Map, i18nKey: "nav.map" },
+  { label: "Settings", to: "/farmer/settings", icon: Settings, i18nKey: "nav.settings" },
 ];
 
 const trend = Array.from({ length: 14 }).map((_, i) => ({
@@ -25,6 +26,7 @@ const trend = Array.from({ length: 14 }).map((_, i) => ({
 }));
 
 function FarmerDashboard() {
+  const { t } = useLang();
   return (
     <PortalShell
       portalName="Farmer Portal"
@@ -42,17 +44,17 @@ function FarmerDashboard() {
               <span className="text-[10px] uppercase tracking-[0.2em] font-bold text-emerald bg-emerald/10 px-2 py-0.5 rounded-full">Farmer ID: F-2847</span>
               <span className="text-[10px] uppercase tracking-[0.2em] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full">Verified</span>
             </div>
-            <h1 className="text-3xl font-bold font-display text-foreground mt-1">Namaste, Ramesh 🌱</h1>
+            <h1 className="text-3xl font-bold font-display text-foreground mt-1">{t("dash.greeting")}</h1>
             <p className="text-sm text-muted-foreground mt-2 max-w-md leading-relaxed">
-              You're on a <span className="text-foreground font-semibold">12-day harvest streak</span>. Weather conditions in <span className="text-foreground font-semibold">Kotagiri</span> are optimal for collection today.
+              {t("dash.streak")}
             </p>
           </div>
           <div className="flex gap-3">
             <Link to="/farmer/collections" className="h-12 inline-flex items-center px-6 rounded-xl bg-muted/50 border border-border text-foreground font-semibold hover:bg-muted transition-all">
-              View Ledger
+              {t("dash.view_ledger")}
             </Link>
             <Link to="/farmer/new-collection" className="h-12 inline-flex items-center px-6 rounded-xl gradient-hero text-white font-semibold shadow-glow transition-all hover:scale-[1.02]">
-              <PlusCircle className="size-4 mr-2" /> Record Harvest
+              <PlusCircle className="size-4 mr-2" /> {t("dash.record_harvest")}
             </Link>
           </div>
         </div>
@@ -60,15 +62,15 @@ function FarmerDashboard() {
 
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
-        <StatCard label="Today's Collections" value="3 batches" delta="+1 vs yesterday" icon={Sprout} tone="emerald" hint="48 kg total" />
-        <StatCard label="Sustainability Score" value="94" delta="Top 8% in region" icon={TreePine} tone="emerald" />
-        <StatCard label="Pending Sync" value="2" icon={Wifi} tone="saffron" hint="Will sync when online" />
-        <StatCard label="Monthly Earnings" value="₹ 42,180" delta="+18% MoM" icon={IndianRupee} tone="earth" />
+        <StatCard label={t("dash.today_collections")} value="3 batches" delta="+1 vs yesterday" icon={Sprout} tone="emerald" hint="48 kg total" />
+        <StatCard label={t("dash.sustainability_score")} value="94" delta="Top 8% in region" icon={TreePine} tone="emerald" />
+        <StatCard label={t("dash.pending_sync")} value="2" icon={Wifi} tone="saffron" hint="Will sync when online" />
+        <StatCard label={t("dash.monthly_earnings")} value="₹ 42,180" delta="+18% MoM" icon={IndianRupee} tone="earth" />
       </div>
 
       {/* Main grid */}
       <div className="grid lg:grid-cols-3 gap-6 mt-6">
-        <Panel title="Recent Collections" subtitle="Harvest volume over last 14 days" action={<Link to="/farmer/collections" className="text-xs text-primary font-medium flex items-center gap-1 hover:underline">View Ledger <ArrowRight className="size-3" /></Link>} className="lg:col-span-2 flex flex-col">
+        <Panel title={t("dash.recent_collections")} subtitle="Harvest volume over last 14 days" action={<Link to="/farmer/collections" className="text-xs text-primary font-medium flex items-center gap-1 hover:underline">{t("dash.view_ledger")} <ArrowRight className="size-3" /></Link>} className="lg:col-span-2 flex flex-col">
           <div className="h-56 -mx-2 mt-2">
             <ResponsiveContainer>
               <AreaChart data={trend} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
@@ -109,21 +111,21 @@ function FarmerDashboard() {
         </Panel>
 
         <div className="space-y-6">
-          <Panel title="Harvest Environment" subtitle="Kotagiri · Live IoT Feed">
+          <Panel title={t("dash.harvest_env")} subtitle="Kotagiri · Live IoT Feed">
             <div className="flex items-center gap-5 p-2">
               <div className="size-16 rounded-[1.25rem] bg-gradient-to-br from-earth/20 to-saffron/20 border border-saffron/30 flex items-center justify-center shadow-inner">
                 <Sun className="size-8 text-saffron drop-shadow-sm" />
               </div>
               <div>
                 <div className="text-4xl font-bold font-display tracking-tight text-foreground">22°<span className="text-2xl text-muted-foreground">C</span></div>
-                <div className="text-sm font-medium text-emerald mt-0.5">Optimal for harvest</div>
+                <div className="text-sm font-medium text-emerald mt-0.5">{t("dash.optimal")}</div>
               </div>
             </div>
             <div className="grid grid-cols-3 gap-3 mt-5">
               {[
-                { l: "Humidity", v: "68%", i: CloudRain },
-                { l: "Rainfall", v: "0 mm", i: CloudRain },
-                { l: "Soil", v: "Moist", i: Sprout }
+                { l: t("dash.humidity"), v: "68%", i: CloudRain },
+                { l: t("dash.rainfall"), v: "0 mm", i: CloudRain },
+                { l: t("dash.soil"), v: "Moist", i: Sprout }
               ].map((w) => (
                 <div key={w.l} className="bg-card border border-border/60 rounded-xl p-3 flex flex-col items-center justify-center text-center shadow-sm hover:border-primary/40 transition-colors">
                   <w.i className="size-4 text-muted-foreground mb-2" />
@@ -134,7 +136,7 @@ function FarmerDashboard() {
             </div>
           </Panel>
 
-          <Panel title="Season Quota" subtitle="Approved by NMPB">
+          <Panel title={t("dash.season_quota")} subtitle="Approved by NMPB">
             <div className="flex items-end justify-between mb-4">
               <div>
                 <div className="text-sm font-medium text-muted-foreground mb-1">Ashwagandha Volume</div>
@@ -152,13 +154,22 @@ function FarmerDashboard() {
         </div>
       </div>
 
-      <div className="grid lg:grid-cols-3 gap-6 mt-6">
-        <Panel title="GPS Territorial Activity" subtitle="Verified collection zones" className="lg:col-span-2 !p-0 overflow-hidden flex flex-col h-[350px]">
-          <div className="flex-1 w-full relative">
+      <div className="grid lg:grid-cols-3 gap-6 mt-6 items-stretch">
+        {/* GPS map — fills full card height */}
+        <div className="lg:col-span-2 bg-card/70 backdrop-blur-xl rounded-[1.25rem] border border-border/60 shadow-card overflow-hidden flex flex-col hover:border-border transition-all duration-300">
+          <div className="flex items-center justify-between p-5 border-b border-border shrink-0">
+            <div>
+              <h3 className="font-display font-semibold text-base">{t("dash.gps_territorial")}</h3>
+              <p className="text-xs text-muted-foreground mt-0.5">Verified collection zones</p>
+            </div>
+          </div>
+          <div className="flex-1 w-full min-h-0">
             <IndiaMap markers={REGIONS.slice(0, 3).map((r) => ({ lat: r.lat, lng: r.lng, label: r.name }))} />
           </div>
-        </Panel>
-        <Panel title="Ledger Synchronization">
+        </div>
+
+        {/* Ledger Synchronization */}
+        <Panel title={t("dash.ledger_sync")}>
           <div className="flex flex-col h-full justify-between">
             <div className="space-y-4">
               <div className="flex items-start gap-4 p-4 rounded-xl bg-emerald/5 border border-emerald/20">
@@ -166,13 +177,12 @@ function FarmerDashboard() {
                   <ShieldCheck className="size-4 text-emerald" />
                 </div>
                 <div>
-                  <div className="text-sm font-bold text-foreground">Fully Synchronized</div>
+                  <div className="text-sm font-bold text-foreground">{t("dash.fully_synced")}</div>
                   <div className="text-xs text-emerald mt-1 font-medium">Network Latency: 42ms</div>
                 </div>
               </div>
-              
               <div className="pt-2">
-                <div className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground mb-3">Recent On-Chain Activity</div>
+                <div className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground mb-3">{t("dash.recent_chain")}</div>
                 <div className="space-y-2.5">
                   {BATCHES.slice(0, 4).map((b) => (
                     <div key={b.id} className="flex items-center gap-3 p-2.5 rounded-lg bg-card border border-border/50 hover:border-emerald/30 transition-colors">
@@ -189,7 +199,7 @@ function FarmerDashboard() {
               </div>
             </div>
             <Link to="/farmer/collections" className="mt-4 block w-full text-center text-xs font-semibold text-primary hover:underline">
-              View Complete Ledger
+              {t("dash.view_ledger")}
             </Link>
           </div>
         </Panel>

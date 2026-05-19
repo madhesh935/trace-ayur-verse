@@ -1,271 +1,431 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useState } from "react";
 import { PortalShell, type NavItem } from "@/components/layout/PortalShell";
-import { Panel, Badge } from "@/components/ui-kit/Panel";
+import { Badge } from "@/components/ui-kit/Panel";
 import { IndiaMap } from "@/components/maps/IndiaMap";
 import {
-  LayoutDashboard, QrCode, History, ShieldCheck, Leaf, Sprout, FlaskConical,
-  Truck, Boxes, Package, MapPin, CheckCircle2, Star, FileBadge, Lock, ArrowRight, Dna, Droplets, Award,
+  QrCode, History, ShieldCheck, Leaf, Sprout, FlaskConical,
+  Truck, Boxes, Package, MapPin, CheckCircle2, Star, FileBadge, Lock,
+  ArrowRight, Dna, Droplets, Award, Search, Camera, RotateCcw, Download,
 } from "lucide-react";
 import { BATCHES, REGIONS } from "@/lib/mock-data";
+import { useLang } from "@/lib/i18n";
 
 export const Route = createFileRoute("/consumer/dashboard")({ component: ConsumerDashboard });
 
 const nav: NavItem[] = [
-  { label: "Scan Product", to: "/consumer/dashboard", icon: QrCode },
-  { label: "My Verifications", to: "/consumer/verifications", icon: History },
-  { label: "Verified Products", to: "/consumer/verified", icon: ShieldCheck },
-  { label: "Sustainability", to: "/consumer/sustainability", icon: Leaf },
+  { label: "Scan Product",      to: "/consumer/dashboard",     icon: QrCode, i18nKey: "nav.scan" },
+  { label: "My Verifications",  to: "/consumer/verifications", icon: History, i18nKey: "nav.verifications" },
+  { label: "Verified Products", to: "/consumer/verified",      icon: ShieldCheck, i18nKey: "nav.verified" },
+  { label: "Sustainability",    to: "/consumer/sustainability", icon: Leaf, i18nKey: "nav.sustainability" },
 ];
 
 const featured = BATCHES[0];
 
-const JOURNEY = [
-  { icon: Sprout, label: "Harvested", detail: "by Ramesh Kumar", sub: "Kotagiri, Nilgiris · Tamil Nadu", date: "Aug 12, 2026", color: "bg-emerald" },
-  { icon: Boxes, label: "Aggregated", detail: "Coimbatore Hub", sub: "Merged with 3 batches · 240 kg", date: "Aug 14, 2026", color: "bg-primary" },
-  { icon: FlaskConical, label: "Lab Verified", detail: "NABL-7821 · Dr. Priya Iyer", sub: "DNA, moisture & pesticide passed", date: "Aug 16, 2026", color: "bg-emerald" },
-  { icon: Package, label: "Packaged", detail: "GMP Facility · Coimbatore", sub: "Cold dried · Stone-ground · Serialized", date: "Aug 18, 2026", color: "bg-primary" },
-  { icon: Truck, label: "Shipped", detail: "Cold chain logistics", sub: "Bengaluru → Mumbai retail network", date: "Aug 22, 2026", color: "bg-saffron" },
-  { icon: QrCode, label: "Verified", detail: "By you · On-chain confirmed", sub: "Authenticity recorded permanently", date: "Just now", color: "bg-emerald" },
+const METRICS = [
+  { icon: Award,       label: "Sustainability", value: "94/100", sub: "Top 8% in India",    color: "text-emerald", bg: "bg-emerald/10 border-emerald/30" },
+  { icon: Dna,         label: "DNA Match",      value: "99.6%",  sub: "Withania somnifera", color: "text-primary", bg: "bg-primary/10 border-primary/30" },
+  { icon: Droplets,    label: "Moisture",       value: "9.2%",   sub: "Pass · Limit ≤12%",  color: "text-emerald", bg: "bg-emerald/10 border-emerald/30" },
+  { icon: ShieldCheck, label: "Trust Score",    value: "A+",     sub: "NMPB Certified",     color: "text-saffron", bg: "bg-saffron/10 border-saffron/30" },
 ];
 
-function ConsumerDashboard() {
+const JOURNEY = [
+  { icon: Sprout,       step: "Harvested",  who: "Ramesh Kumar",              detail: "Kotagiri, Nilgiris · Tamil Nadu",        date: "Aug 12, 2026" },
+  { icon: Boxes,        step: "Aggregated", who: "Coimbatore Processing Hub", detail: "4 batches merged · 240 kg total",         date: "Aug 14, 2026" },
+  { icon: FlaskConical, step: "Lab Tested", who: "NABL-7821 · Dr. Priya Iyer",detail: "DNA, moisture & pesticide cleared",       date: "Aug 16, 2026" },
+  { icon: Package,      step: "Packaged",   who: "GMP Facility, Coimbatore",  detail: "Cold dried · Stone-ground · Serialized",  date: "Aug 18, 2026" },
+  { icon: Truck,        step: "Shipped",    who: "Cold-chain fleet",           detail: "Bengaluru → Mumbai retail network",       date: "Aug 22, 2026" },
+  { icon: QrCode,       step: "Verified",   who: "You · Aarav Nair",           detail: "Authenticity confirmed on-chain",         date: "Just now" },
+];
+
+const RECENT = BATCHES.slice(0, 8).map((b, i) => ({
+  ...b,
+  brand: ["Himalaya","Patanjali","Dabur","Baidyanath","Kerala Ayurveda","Vaidyaratnam","Charak","Zandu"][i],
+  timeAgo: ["Just now","1h ago","Yesterday","2d ago","3d ago","4d ago","5d ago","6d ago"][i],
+}));
+
+/* ──────────────────────────────────────────────────── */
+/*  SCANNER VIEW (before scan)                          */
+/* ──────────────────────────────────────────────────── */
+function ScannerView({ onScan }: { onScan: () => void }) {
+  const { t } = useLang();
   return (
-    <PortalShell portalName="Consumer Portal" portalTagline="Authenticity verification" nav={nav} user={{ name: "Aarav Nair", role: "Consumer", initials: "AN" }}>
-
-      {/* ── HERO SCANNER + RESULT PANEL ─────────────────────────────────── */}
-      <div className="grid lg:grid-cols-5 gap-6">
-
-        {/* Left: Scanner */}
-        <div className="lg:col-span-2 flex flex-col gap-5">
-
-          {/* Scanner Card */}
-          <div className="bg-card/80 backdrop-blur-xl border border-border/60 rounded-[1.5rem] p-6 relative overflow-hidden shadow-card">
-            <div className="absolute -top-24 -right-24 size-64 rounded-full bg-primary/15 blur-[60px] pointer-events-none" />
-            <div className="absolute bottom-0 left-0 w-full h-0.5 gradient-leaf" />
-            <div className="relative">
-              <div className="flex items-center gap-2 mb-1">
-                <span className="text-[10px] uppercase tracking-[0.2em] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full">AyurTrace Scanner</span>
+    <div className="flex flex-col gap-5">
+      {/* Scanner card — centered, prominent */}
+      <div className="max-w-md mx-auto w-full">
+        <div className="rounded-2xl border border-border/60 bg-card/80 backdrop-blur-xl overflow-hidden shadow-sm">
+          <div className="h-1 w-full bg-gradient-to-r from-emerald via-primary to-leaf" />
+          <div className="p-6 space-y-5">
+            <div className="text-center">
+              <div className="size-14 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mx-auto mb-3">
+                <QrCode className="size-7 text-primary" />
               </div>
-              <h1 className="text-2xl font-bold font-display mt-2 text-foreground">Verify your product</h1>
-              <p className="text-sm text-muted-foreground mt-1">Scan the QR code on any Ayurvedic pack for instant blockchain verification</p>
-
-              {/* QR viewport */}
-              <div className="mt-5 aspect-square max-w-[220px] mx-auto bg-gradient-to-br from-muted/50 to-muted/20 rounded-2xl border-2 border-dashed border-border relative overflow-hidden flex items-center justify-center">
-                <QrCode className="size-20 text-primary/40" />
-                <div className="absolute inset-x-0 h-10 scan-line" />
-                {/* Corner markers */}
-                {["top-3 left-3 border-t-2 border-l-2", "top-3 right-3 border-t-2 border-r-2", "bottom-3 left-3 border-b-2 border-l-2", "bottom-3 right-3 border-b-2 border-r-2"].map((cls, i) => (
-                  <div key={i} className={`absolute size-6 border-primary/70 ${cls}`} />
-                ))}
-              </div>
-
-              <button className="mt-5 w-full h-12 rounded-xl gradient-hero text-white font-semibold shadow-glow hover:scale-[1.02] transition-transform flex items-center justify-center gap-2">
-                <QrCode className="size-4" /> Open Camera
-              </button>
-              <div className="mt-4 relative">
-                <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-border/50" /></div>
-                <div className="relative text-center"><span className="bg-card px-3 text-xs text-muted-foreground">or enter batch ID</span></div>
-              </div>
-              <input
-                placeholder="e.g. AYT-ASH-02418"
-                className="mt-3 w-full h-11 px-4 rounded-xl border border-border/60 bg-muted/30 text-center font-mono text-sm outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all placeholder:text-muted-foreground/60"
-              />
-            </div>
-          </div>
-
-          {/* Recently Verified */}
-          <Panel title="Recently Scanned" subtitle="Your last 4 verifications">
-            <div className="space-y-2 -mx-1">
-              {BATCHES.slice(0, 4).map((b, i) => (
-                <div key={b.id} className={`flex items-center gap-3 p-3 rounded-xl hover:bg-muted/50 transition-colors cursor-pointer ${i === 0 ? "bg-emerald/5 border border-emerald/20" : ""}`}>
-                  <div className="size-10 rounded-xl bg-gradient-to-br from-muted to-muted/50 border border-border/50 flex items-center justify-center text-xl shrink-0">{b.herb.emoji}</div>
-                  <div className="flex-1 min-w-0">
-                    <div className="text-sm font-bold text-foreground truncate">{b.herb.name}</div>
-                    <div className="text-[11px] font-mono text-muted-foreground">{b.id}</div>
-                  </div>
-                  <div className="text-right shrink-0">
-                    <CheckCircle2 className="size-4 text-emerald" />
-                    <div className="text-[10px] text-muted-foreground mt-0.5">{i === 0 ? "Just now" : `${i}d ago`}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <Link to="/consumer/verifications" className="mt-4 flex items-center justify-center gap-1 text-xs font-semibold text-primary hover:underline">
-              View all scans <ArrowRight className="size-3" />
-            </Link>
-          </Panel>
-        </div>
-
-        {/* Right: Product Verification Result */}
-        <div className="lg:col-span-3 flex flex-col gap-5">
-
-          {/* Product Header */}
-          <div className="bg-card/80 backdrop-blur-xl border border-border/60 rounded-[1.5rem] overflow-hidden shadow-card">
-            <div className="gradient-hero px-7 py-6 relative overflow-hidden">
-              <div className="absolute -top-10 -right-10 size-48 rounded-full bg-white/10 blur-2xl" />
-              <div className="relative flex items-start justify-between gap-4 flex-wrap">
-                <div>
-                  <div className="text-[10px] uppercase tracking-[0.2em] font-bold text-white/70 mb-2">✓ Verified Authentic</div>
-                  <h2 className="text-2xl font-bold font-display text-white">Ashwagandha Root Powder</h2>
-                  <div className="text-white/80 text-sm mt-1">240g · Himalaya Wellness · Batch <span className="font-mono">{featured.id}</span></div>
-                </div>
-                <div className="flex flex-col items-center bg-white/15 border border-white/20 rounded-2xl px-5 py-3 backdrop-blur-sm">
-                  <ShieldCheck className="size-8 text-white" />
-                  <div className="text-[10px] text-white/80 font-semibold uppercase tracking-wider mt-1">On-Chain</div>
-                </div>
-              </div>
+              <h2 className="text-xl font-bold font-display text-foreground">{t("consumer.scan_verify")}</h2>
+              <p className="text-sm text-muted-foreground mt-1">{t("consumer.point_qr")}</p>
             </div>
 
-            {/* Quality metrics */}
-            <div className="p-6 grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {/* Viewfinder */}
+            <div className="relative w-full aspect-square rounded-2xl border-2 border-dashed border-primary/40 bg-gradient-to-br from-primary/5 via-muted/20 to-muted/5 overflow-hidden flex items-center justify-center">
+              <QrCode className="size-28 text-muted-foreground/15" />
+              <div className="absolute inset-x-0 h-10 bg-gradient-to-b from-transparent via-primary/35 to-transparent scan-line pointer-events-none" />
               {[
-                { icon: Award, label: "Sustainability", value: "94 / 100", sub: "Top 8% in India", color: "text-emerald" },
-                { icon: Dna, label: "DNA Match", value: "99.6%", sub: "Withania somnifera", color: "text-primary" },
-                { icon: Droplets, label: "Moisture", value: "9.2%", sub: "Limit: ≤ 12%", color: "text-emerald" },
-                { icon: ShieldCheck, label: "Trust Score", value: "A+", sub: "NMPB Certified", color: "text-saffron" },
-              ].map((m) => (
-                <div key={m.label} className="bg-muted/30 border border-border/40 rounded-xl p-4 flex flex-col items-center text-center hover:border-primary/30 transition-colors">
-                  <m.icon className={`size-5 ${m.color} mb-2`} />
-                  <div className={`text-xl font-bold font-display ${m.color}`}>{m.value}</div>
-                  <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mt-1">{m.label}</div>
-                  <div className="text-[10px] text-muted-foreground mt-0.5">{m.sub}</div>
-                </div>
+                "top-4 left-4 border-t-[4px] border-l-[4px]",
+                "top-4 right-4 border-t-[4px] border-r-[4px]",
+                "bottom-4 left-4 border-b-[4px] border-l-[4px]",
+                "bottom-4 right-4 border-b-[4px] border-r-[4px]",
+              ].map((cls, i) => (
+                <div key={i} className={`absolute size-8 border-primary rounded-sm ${cls}`} />
               ))}
-            </div>
-
-            {/* Journey timeline */}
-            <div className="px-6 pb-6 border-t border-border/50 pt-5">
-              <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-5">Provenance Journey</div>
-              <div className="relative pl-8">
-                {/* vertical line */}
-                <div className="absolute left-[14px] top-2 bottom-2 w-px bg-gradient-to-b from-emerald via-primary to-emerald opacity-40" />
-                <div className="space-y-5">
-                  {JOURNEY.map((e, i) => (
-                    <div key={i} className="relative flex items-start gap-4">
-                      <div className={`absolute -left-8 size-7 rounded-full ${e.color} flex items-center justify-center border-2 border-background shadow-sm shrink-0 z-10`}>
-                        <e.icon className="size-3.5 text-white" />
-                      </div>
-                      <div className="flex-1 bg-muted/20 border border-border/40 rounded-xl px-4 py-3 hover:border-primary/30 transition-colors">
-                        <div className="flex items-start justify-between gap-3 flex-wrap">
-                          <div>
-                            <div className="font-semibold text-sm text-foreground">{e.label} · <span className="font-normal text-muted-foreground">{e.detail}</span></div>
-                            <div className="text-xs text-muted-foreground mt-0.5">{e.sub}</div>
-                          </div>
-                          <div className="text-[11px] text-muted-foreground whitespace-nowrap font-medium shrink-0">{e.date}</div>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
+              <div className="absolute bottom-4 left-0 right-0 flex justify-center">
+                <div className="flex items-center gap-2 bg-black/50 backdrop-blur-sm text-white text-xs font-semibold px-4 py-1.5 rounded-full">
+                  <div className="size-1.5 rounded-full bg-emerald animate-pulse" />
+                  Scanning for QR code…
                 </div>
               </div>
             </div>
-          </div>
 
-          {/* Bottom row: Map + Farmer + Certificate + Blockchain */}
-          <div className="grid sm:grid-cols-2 gap-5">
+            <button
+              onClick={onScan}
+              className="w-full h-13 rounded-xl gradient-hero text-white font-bold shadow-glow hover:scale-[1.02] active:scale-100 transition-transform flex items-center justify-center gap-2 text-base py-3.5"
+            >
+              <Camera className="size-5" /> {t("consumer.scan_verify")}
+            </button>
 
-            {/* Farm Origin Map */}
-            <Panel title="Farm Origin" subtitle="Kotagiri, Nilgiris · Tamil Nadu">
-              <div className="h-40 rounded-xl overflow-hidden -mx-1 mb-3">
-                <IndiaMap markers={[{ lat: REGIONS[0].lat, lng: REGIONS[0].lng, label: "Farm" }]} />
-              </div>
-              <div className="flex items-center gap-2 text-sm font-medium">
-                <MapPin className="size-4 text-emerald shrink-0" />
-                <span className="text-foreground">Kotagiri, Nilgiris</span>
-              </div>
-              <div className="text-xs text-muted-foreground mt-1 ml-6">11.4916°N, 76.7337°E · 2,108m altitude</div>
-              <div className="mt-3 flex items-center gap-2 text-xs">
-                <Badge tone="success">NMPB-TN-04</Badge>
-                <span className="text-muted-foreground">Approved zone</span>
-              </div>
-            </Panel>
+            <div className="flex items-center gap-3">
+              <div className="flex-1 border-t border-border/40" />
+              <span className="text-xs text-muted-foreground font-medium">{t("consumer.or_enter")}</span>
+              <div className="flex-1 border-t border-border/40" />
+            </div>
 
-            {/* Meet the Farmer */}
-            <Panel title="Meet the Farmer" subtitle="Verified & trusted partner">
-              <div className="flex items-center gap-4 mb-4">
-                <div className="size-16 rounded-2xl gradient-leaf flex items-center justify-center text-white text-xl font-bold shadow-glow shrink-0">RK</div>
-                <div>
-                  <div className="font-bold text-foreground text-[15px]">Ramesh Kumar</div>
-                  <div className="text-xs text-muted-foreground mt-0.5">Farmer ID: F-2847 · 18 years experience</div>
-                  <div className="flex items-center gap-0.5 mt-1.5">
-                    {[1,2,3,4,5].map((s) => <Star key={s} className="size-3 fill-saffron text-saffron" />)}
-                    <span className="text-xs text-muted-foreground ml-1.5">Trusted partner</span>
-                  </div>
-                </div>
+            <div className="flex gap-2">
+              <div className="flex-1 relative">
+                <Search className="size-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                <input
+                  placeholder="e.g. AYT-ASH-02418"
+                  className="w-full h-11 pl-9 pr-3 rounded-xl border border-border/60 bg-muted/30 font-mono text-sm outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all"
+                />
               </div>
-              <div className="bg-muted/30 border border-border/50 rounded-xl p-3">
-                <p className="text-xs text-muted-foreground italic leading-relaxed">"Three generations of my family have farmed these slopes. Every plant is harvested by hand with respect for the forest."</p>
-              </div>
-              <div className="grid grid-cols-2 gap-2 mt-3 text-xs">
-                <div className="bg-emerald/5 border border-emerald/20 rounded-lg p-2 text-center">
-                  <div className="font-bold text-emerald">94</div>
-                  <div className="text-muted-foreground">Trust Score</div>
-                </div>
-                <div className="bg-primary/5 border border-primary/20 rounded-lg p-2 text-center">
-                  <div className="font-bold text-primary">Kotagiri</div>
-                  <div className="text-muted-foreground">Village</div>
-                </div>
-              </div>
-            </Panel>
-
-            {/* Lab Certificate */}
-            <Panel title="Lab Certificate" subtitle="NABL-accredited · IPFS anchored">
-              <div className="flex items-center gap-4 p-4 rounded-xl bg-primary/5 border border-primary/20 mb-4">
-                <div className="size-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-                  <FileBadge className="size-6 text-primary" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="text-sm font-bold text-foreground truncate">CoA-{featured.id}.pdf</div>
-                  <div className="text-[11px] font-mono text-muted-foreground truncate mt-0.5">ipfs://Qm{featured.txHash.slice(4, 22)}…</div>
-                </div>
-                <Badge tone="success"><Lock className="size-3" /> IPFS</Badge>
-              </div>
-              <div className="space-y-2 text-xs">
-                {[
-                  ["Lab", "NABL Bengaluru · ID-7821"],
-                  ["Analyst", "Dr. Priya Iyer"],
-                  ["DNA Test", "Authentic · 99.6%"],
-                  ["Pesticide", "Not Detected (42 compounds)"],
-                  ["Issued", "Aug 16, 2026"],
-                ].map(([k, v]) => (
-                  <div key={k} className="flex justify-between items-center py-1.5 border-b border-border/40 last:border-0">
-                    <span className="text-muted-foreground font-medium">{k}</span>
-                    <span className="font-semibold text-foreground text-right">{v}</span>
-                  </div>
-                ))}
-              </div>
-              <button className="mt-4 w-full h-10 rounded-xl border border-border hover:bg-muted/50 text-sm font-semibold flex items-center justify-center gap-2 transition-colors">
-                <FileBadge className="size-4" /> Download Full CoA
+              <button onClick={onScan} className="h-11 px-5 rounded-xl bg-primary text-primary-foreground font-bold text-sm hover:opacity-90 transition-opacity">
+                Verify
               </button>
-            </Panel>
-
-            {/* Blockchain Proof */}
-            <Panel title="Blockchain Proof" subtitle="Immutable on-chain record">
-              <div className="space-y-2 text-xs mb-4">
-                {[
-                  ["Network", "AyurTrace Ledger"],
-                  ["Block Number", featured.block.toLocaleString()],
-                  ["Confirmations", "324"],
-                  ["Status", "Finalized"],
-                ].map(([k, v]) => (
-                  <div key={k} className="flex justify-between items-center py-1.5 border-b border-border/40 last:border-0">
-                    <span className="text-muted-foreground font-medium">{k}</span>
-                    <span className={`font-bold ${k === "Status" ? "text-emerald" : "text-foreground"}`}>{v}</span>
-                  </div>
-                ))}
-              </div>
-              <div className="bg-muted/30 border border-border/50 rounded-xl p-3">
-                <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold mb-1.5">Transaction Hash</div>
-                <div className="font-mono text-[11px] text-foreground break-all">{featured.txHash}</div>
-              </div>
-              <div className="mt-3 flex items-center gap-2 p-3 bg-emerald/5 border border-emerald/20 rounded-xl">
-                <CheckCircle2 className="size-4 text-emerald shrink-0" />
-                <span className="text-xs font-semibold text-emerald">Authenticity permanently verified on-chain</span>
-              </div>
-            </Panel>
+            </div>
           </div>
         </div>
       </div>
+
+      {/* Recent scans below scanner */}
+      <div className="rounded-2xl border border-border/60 bg-card/80 backdrop-blur-xl overflow-hidden shadow-sm">
+        <div className="px-5 py-4 border-b border-border/50 flex items-center justify-between">
+          <div>
+            <div className="font-bold text-foreground">{t("consumer.recent_scans")}</div>
+            <div className="text-xs text-muted-foreground">Your verification history</div>
+          </div>
+          <Link to="/consumer/verifications" className="text-xs text-primary font-bold flex items-center gap-1 hover:underline">
+            View all <ArrowRight className="size-3" />
+          </Link>
+        </div>
+        <div className="divide-y divide-border/40">
+          {RECENT.map((b, i) => (
+            <button
+              key={b.id}
+              onClick={onScan}
+              className="w-full flex items-center gap-4 px-5 py-3.5 hover:bg-muted/30 transition-colors group text-left"
+            >
+              <div className="size-11 rounded-xl bg-muted/60 border border-border/40 flex items-center justify-center text-2xl shrink-0 group-hover:scale-105 transition-transform">
+                {b.herb.emoji}
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="text-sm font-bold text-foreground truncate">{b.herb.name}</div>
+                <div className="text-xs text-muted-foreground truncate">{b.brand}</div>
+                <div className="font-mono text-[10px] text-muted-foreground/70 mt-0.5">{b.id}</div>
+              </div>
+              <div className="text-right shrink-0 flex flex-col items-end gap-1">
+                <div className="flex items-center gap-1.5">
+                  <CheckCircle2 className="size-4 text-emerald" />
+                  <span className="text-xs font-semibold text-emerald">Authentic</span>
+                </div>
+                <div className="text-[10px] text-muted-foreground">{b.timeAgo}</div>
+              </div>
+            </button>
+          ))}
+        </div>
+        <div className="p-4 border-t border-border/40">
+          <Link to="/consumer/verifications" className="w-full h-10 rounded-xl border border-border/60 bg-muted/20 hover:bg-muted/50 text-sm font-bold flex items-center justify-center gap-2 transition-colors text-foreground">
+            View All Verifications <ArrowRight className="size-4" />
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ──────────────────────────────────────────────────── */
+/*  RESULT VIEW (after scan)                            */
+/* ──────────────────────────────────────────────────── */
+function ResultView({ onReset }: { onReset: () => void }) {
+  const { t } = useLang();
+  return (
+    <div className="space-y-5">
+
+      {/* ── Success banner ── */}
+      <div className="flex items-center justify-between flex-wrap gap-3">
+        <div className="flex items-center gap-3">
+          <div className="size-10 rounded-full bg-emerald flex items-center justify-center shadow-glow">
+            <CheckCircle2 className="size-6 text-white" />
+          </div>
+          <div>
+            <div className="font-bold text-lg text-foreground">{t("consumer.verified_success")}</div>
+            <div className="text-xs text-muted-foreground">Scanned just now · Blockchain record confirmed</div>
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <button onClick={onReset} className="h-9 px-4 rounded-xl border border-border/60 bg-card/70 text-sm font-semibold flex items-center gap-2 hover:bg-muted/50 transition-colors">
+            <RotateCcw className="size-4" /> {t("consumer.scan_another")}
+          </button>
+          <Link to="/consumer/verifications" className="h-9 px-4 rounded-xl border border-border/60 bg-card/70 text-sm font-semibold flex items-center gap-2 hover:bg-muted/50 transition-colors">
+            <History className="size-4" /> {t("nav.verifications")}
+          </Link>
+        </div>
+      </div>
+
+      {/* ── Product hero ── */}
+      <div className="rounded-2xl border border-emerald/30 bg-card/80 backdrop-blur-xl overflow-hidden shadow-sm">
+        <div className="relative bg-gradient-to-br from-primary to-emerald/80 px-6 py-6 overflow-hidden">
+          <div className="absolute -top-12 -right-12 size-56 rounded-full bg-white/10 blur-3xl pointer-events-none" />
+          <div className="relative flex items-start justify-between gap-4">
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="size-5 rounded-full bg-white/20 flex items-center justify-center">
+                  <CheckCircle2 className="size-3 text-white" />
+                </div>
+                <span className="text-[10px] text-white/80 font-bold uppercase tracking-widest">Verified Authentic · On-Chain</span>
+              </div>
+              <h2 className="text-2xl font-bold font-display text-white leading-tight">Ashwagandha Root Powder</h2>
+              <div className="flex flex-wrap items-center gap-x-3 mt-2 text-white/70 text-sm">
+                <span className="font-semibold text-white">240g</span>
+                <span>Himalaya Wellness</span>
+                <span className="font-mono text-xs bg-white/15 px-2 py-0.5 rounded">{featured.id}</span>
+              </div>
+            </div>
+            <div className="shrink-0 flex flex-col items-center bg-white/15 border border-white/25 rounded-2xl px-5 py-4">
+              <ShieldCheck className="size-8 text-white" />
+              <div className="text-[9px] text-white/75 font-bold uppercase tracking-wider mt-1.5 text-center">Blockchain<br/>Verified</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Quality metrics — 4 col stripe */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 border-b border-border/50">
+          {METRICS.map((m, i) => (
+            <div key={m.label} className={`flex flex-col items-center py-5 px-4 text-center gap-1.5 hover:bg-muted/20 transition-colors ${i < 3 ? "border-r border-border/40" : ""}`}>
+              <div className={`size-9 rounded-xl border flex items-center justify-center ${m.bg}`}>
+                <m.icon className={`size-5 ${m.color}`} />
+              </div>
+              <div className={`text-xl font-bold font-display ${m.color}`}>{m.value}</div>
+              <div className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">{m.label === "Sustainability" ? t("nav.sustainability") : m.label}</div>
+              <div className="text-[10px] text-muted-foreground">{m.sub}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* ── Two-col: Journey + Sidebar ── */}
+      <div className="grid lg:grid-cols-3 gap-5">
+
+        {/* Journey timeline — 2 cols */}
+        <div className="lg:col-span-2 rounded-2xl border border-border/60 bg-card/80 backdrop-blur-xl overflow-hidden shadow-sm">
+          <div className="px-6 py-4 border-b border-border/50">
+            <div className="font-bold text-foreground">{t("consumer.supply_journey")}</div>
+            <div className="text-xs text-muted-foreground">Every step verified and recorded on-chain</div>
+          </div>
+          <div className="p-6">
+            <div className="relative pl-10">
+              <div className="absolute left-[15px] top-4 bottom-4 w-px bg-gradient-to-b from-emerald/60 via-primary/30 to-transparent" />
+              <div className="space-y-3">
+                {JOURNEY.map((s, i) => (
+                  <div key={i} className="relative flex items-start gap-4">
+                    <div className="absolute -left-10 size-8 rounded-full gradient-hero flex items-center justify-center border-2 border-background shadow-sm z-10">
+                      <s.icon className="size-3.5 text-white" />
+                    </div>
+                    <div className="flex-1 flex items-start justify-between gap-3 bg-muted/20 border border-border/40 rounded-xl px-4 py-3 hover:bg-muted/40 hover:border-primary/20 transition-colors">
+                      <div className="min-w-0">
+                        <div className="text-sm font-bold text-foreground">{s.step}
+                          <span className="font-normal text-muted-foreground text-xs ml-1.5">· {s.who}</span>
+                        </div>
+                        <div className="text-xs text-muted-foreground mt-0.5">{s.detail}</div>
+                      </div>
+                      <div className="text-[11px] text-muted-foreground font-semibold shrink-0 whitespace-nowrap pt-0.5">{s.date}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Sidebar: Farmer + Lab Cert stacked */}
+        <div className="flex flex-col gap-5">
+
+          {/* Farmer */}
+          <div className="rounded-2xl border border-border/60 bg-card/80 backdrop-blur-xl overflow-hidden shadow-sm">
+            <div className="h-1 w-full bg-gradient-to-r from-leaf to-emerald" />
+            <div className="p-5 space-y-4">
+              <div className="font-bold text-sm text-foreground">{t("consumer.meet_farmer")}</div>
+              <div className="flex items-center gap-3">
+                <div className="size-14 rounded-2xl gradient-leaf flex items-center justify-center text-white font-bold text-xl shadow-glow shrink-0">RK</div>
+                <div>
+                  <div className="font-bold text-foreground">Ramesh Kumar</div>
+                  <div className="text-xs text-muted-foreground">ID: F-2847 · 18 yrs exp</div>
+                  <div className="flex items-center gap-0.5 mt-1.5">
+                    {[1,2,3,4,5].map((s) => <Star key={s} className="size-3 fill-saffron text-saffron" />)}
+                  </div>
+                </div>
+              </div>
+              <div className="grid grid-cols-3 gap-2 text-center text-xs">
+                {[["94","Trust"],["2021","Since"],["Kotagiri","Village"]].map(([v,l]) => (
+                  <div key={l} className="bg-muted/30 border border-border/40 rounded-xl py-2.5">
+                    <div className="font-bold text-foreground text-sm">{v}</div>
+                    <div className="text-muted-foreground text-[10px]">{l}</div>
+                  </div>
+                ))}
+              </div>
+              <p className="text-[11px] text-muted-foreground italic bg-muted/20 border border-border/40 rounded-xl p-3 leading-relaxed">"Three generations of my family have farmed these slopes. Every plant is harvested by hand with respect for the forest."</p>
+            </div>
+          </div>
+
+          {/* Lab Certificate */}
+          <div className="rounded-2xl border border-border/60 bg-card/80 backdrop-blur-xl overflow-hidden shadow-sm">
+            <div className="px-5 py-4 border-b border-border/50">
+              <div className="font-bold text-sm text-foreground">{t("consumer.lab_cert")}</div>
+              <div className="text-xs text-muted-foreground">NABL accredited · IPFS anchored</div>
+            </div>
+            <div className="p-5 space-y-3">
+              <div className="flex items-center gap-3 p-3 rounded-xl bg-primary/5 border border-primary/20">
+                <div className="size-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                  <FileBadge className="size-5 text-primary" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="text-xs font-bold text-foreground truncate">CoA-{featured.id}.pdf</div>
+                  <div className="text-[10px] font-mono text-muted-foreground truncate">ipfs://Qm{featured.txHash.slice(4,18)}…</div>
+                </div>
+                <Badge tone="success"><Lock className="size-2.5" /> IPFS</Badge>
+              </div>
+              {[["DNA","Authentic · 99.6%"],["Pesticide","Not Detected"],["Moisture","9.2% — Pass"],["Issued","Aug 16, 2026"]].map(([k,v]) => (
+                <div key={k} className="flex items-center justify-between py-1.5 border-b border-border/30 last:border-0 text-xs">
+                  <span className="text-muted-foreground font-medium">{k}</span>
+                  <span className="font-bold text-foreground">{v}</span>
+                </div>
+              ))}
+              <button className="w-full h-9 rounded-xl border border-border/60 hover:bg-muted/50 text-xs font-bold flex items-center justify-center gap-2 transition-colors">
+                <Download className="size-3.5" /> {t("consumer.download_coa")}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Map + Blockchain — full width row ── */}
+      <div className="grid lg:grid-cols-3 gap-5">
+
+        {/* Farm Origin Map — 2 cols */}
+        <div className="lg:col-span-2 rounded-2xl border border-border/60 bg-card/80 backdrop-blur-xl overflow-hidden shadow-sm flex flex-col">
+          <div className="px-5 py-4 border-b border-border/50 flex items-center justify-between shrink-0">
+            <div>
+              <div className="font-bold text-foreground">Farm Origin Map</div>
+              <div className="text-xs text-muted-foreground">GPS-stamped harvest location · verified on-chain</div>
+            </div>
+            <Badge tone="success"><MapPin className="size-3" /> GPS Verified</Badge>
+          </div>
+          <div className="flex-1 min-h-[220px] border-b border-border/40">
+            <IndiaMap markers={[{ lat: REGIONS[0].lat, lng: REGIONS[0].lng, label: "Farm · Kotagiri" }]} />
+          </div>
+          <div className="p-4 grid grid-cols-4 gap-3">
+            {[
+              { l: "Location",   v: "Kotagiri, Nilgiris" },
+              { l: "State",      v: "Tamil Nadu" },
+              { l: "Coordinates",v: "11.49°N · 76.73°E" },
+              { l: "Altitude",   v: "2,108 m" },
+            ].map((f) => (
+              <div key={f.l} className="bg-muted/30 border border-border/40 rounded-xl p-3">
+                <div className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider">{f.l}</div>
+                <div className="text-xs font-bold text-foreground mt-1">{f.v}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Blockchain Proof */}
+        <div className="rounded-2xl border border-border/60 bg-card/80 backdrop-blur-xl overflow-hidden shadow-sm flex flex-col">
+          <div className="px-5 py-4 border-b border-border/50 shrink-0">
+            <div className="font-bold text-foreground">{t("consumer.blockchain_proof")}</div>
+            <div className="text-xs text-muted-foreground">Immutable on-chain record</div>
+          </div>
+          <div className="p-5 flex flex-col gap-3 flex-1">
+            <div className="flex items-center gap-3 p-3 rounded-xl bg-emerald/5 border border-emerald/20">
+              <div className="size-9 rounded-full bg-emerald/15 flex items-center justify-center shrink-0">
+                <CheckCircle2 className="size-5 text-emerald" />
+              </div>
+              <div>
+                <div className="text-xs font-bold text-foreground">Authenticity Confirmed</div>
+                <div className="text-[11px] text-emerald font-semibold">324 confirmations · Finalized</div>
+              </div>
+            </div>
+            <div className="space-y-0 flex-1">
+              {[
+                ["Network",      "AyurTrace Ledger"],
+                ["Block",        featured.block.toLocaleString()],
+                ["Confirmations","324"],
+                ["Status",       "Finalized ✓"],
+              ].map(([k, v]) => (
+                <div key={k} className="flex items-center justify-between py-2 border-b border-border/30 last:border-0 text-xs">
+                  <span className="text-muted-foreground font-medium">{k}</span>
+                  <span className={`font-bold ${k === "Status" ? "text-emerald" : "text-foreground"}`}>{v}</span>
+                </div>
+              ))}
+            </div>
+            <div className="bg-muted/30 border border-border/40 rounded-xl p-3">
+              <div className="text-[9px] uppercase tracking-wider text-muted-foreground font-bold mb-1.5">Tx Hash</div>
+              <div className="font-mono text-[10px] text-foreground break-all leading-relaxed">{featured.txHash}</div>
+            </div>
+            <button className="w-full h-10 rounded-xl gradient-hero text-white font-bold text-xs flex items-center justify-center gap-2 shadow-glow hover:scale-[1.02] transition-transform shrink-0">
+              <Download className="size-3.5" /> {t("consumer.save_pdf")}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ──────────────────────────────────────────────────── */
+/*  ROOT COMPONENT                                      */
+/* ──────────────────────────────────────────────────── */
+function ConsumerDashboard() {
+  const [scanned, setScanned] = useState(false);
+  const { t } = useLang();
+
+  return (
+    <PortalShell portalName="Consumer Portal" portalTagline="Authenticity verification" nav={nav} user={{ name: "Aarav Nair", role: "Consumer", initials: "AN" }}>
+      <div className="flex items-center justify-between mb-5">
+        <div>
+          <h1 className="text-2xl font-bold font-display tracking-tight">
+            {scanned ? "Scan Result" : t("consumer.scan_verify")}
+          </h1>
+          <p className="text-sm text-muted-foreground mt-0.5">
+            {scanned ? "Full provenance details for your scanned product" : t("consumer.tagline")}
+          </p>
+        </div>
+        {scanned && (
+          <button onClick={() => setScanned(false)} className="h-9 px-4 rounded-xl border border-border/60 bg-card/70 text-sm font-semibold flex items-center gap-2 hover:bg-muted/50 transition-colors">
+            <RotateCcw className="size-4" /> {t("consumer.scan_another")}
+          </button>
+        )}
+      </div>
+
+      {scanned
+        ? <ResultView onReset={() => setScanned(false)} />
+        : <ScannerView onScan={() => setScanned(true)} />
+      }
     </PortalShell>
   );
 }

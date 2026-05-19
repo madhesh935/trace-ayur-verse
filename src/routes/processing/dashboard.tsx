@@ -12,15 +12,15 @@ import { Bar, BarChart, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YA
 export const Route = createFileRoute("/processing/dashboard")({ component: ProcessingDashboard });
 
 const nav: NavItem[] = [
-  { label: "Dashboard", to: "/processing/dashboard", icon: LayoutDashboard },
-  { label: "Incoming Batches", to: "/processing/incoming", icon: Inbox, badge: "12" },
-  { label: "Batch Aggregation", to: "/processing/aggregation", icon: GitMerge },
-  { label: "Drying Operations", to: "/processing/drying", icon: Wind },
-  { label: "Grinding Operations", to: "/processing/grinding", icon: Cog },
-  { label: "Packaging", to: "/processing/packaging", icon: Package },
-  { label: "Shipment Tracking", to: "/processing/shipment", icon: Truck },
-  { label: "Warehouse", to: "/processing/warehouse", icon: Warehouse },
-  { label: "Reports", to: "/processing/reports", icon: FileText },
+  { label: "Dashboard", to: "/processing/dashboard", icon: LayoutDashboard, i18nKey: "nav.dashboard" },
+  { label: "Incoming Batches", to: "/processing/incoming", icon: Inbox, badge: "12", i18nKey: "nav.incoming" },
+  { label: "Batch Aggregation", to: "/processing/aggregation", icon: GitMerge, i18nKey: "nav.aggregation" },
+  { label: "Drying Operations", to: "/processing/drying", icon: Wind, i18nKey: "nav.drying" },
+  { label: "Grinding Operations", to: "/processing/grinding", icon: Cog, i18nKey: "nav.grinding" },
+  { label: "Packaging", to: "/processing/packaging", icon: Package, i18nKey: "nav.packaging" },
+  { label: "Shipment Tracking", to: "/processing/shipment", icon: Truck, i18nKey: "nav.shipment" },
+  { label: "Warehouse", to: "/processing/warehouse", icon: Warehouse, i18nKey: "nav.warehouse" },
+  { label: "Reports", to: "/processing/reports", icon: FileText, i18nKey: "nav.reports" },
 ];
 
 const tempData = Array.from({ length: 24 }).map((_, i) => ({

@@ -12,13 +12,13 @@ import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recha
 export const Route = createFileRoute("/regulator/dashboard")({ component: RegulatorDashboard });
 
 const nav: NavItem[] = [
-  { label: "Dashboard", to: "/regulator/dashboard", icon: LayoutDashboard },
-  { label: "Violations", to: "/regulator/violations", icon: AlertTriangle, badge: "4" },
-  { label: "Sustainability Reports", to: "/regulator/sustainability", icon: TreePine },
-  { label: "Protected Zones", to: "/regulator/zones", icon: Shield },
-  { label: "Audit Logs", to: "/regulator/audit-logs", icon: ScrollText },
-  { label: "Export Certifications", to: "/regulator/export-certifications", icon: FileCheck2 },
-  { label: "Compliance Analytics", to: "/regulator/compliance", icon: BarChart3 },
+  { label: "Dashboard", to: "/regulator/dashboard", icon: LayoutDashboard, i18nKey: "nav.dashboard" },
+  { label: "Violations", to: "/regulator/violations", icon: AlertTriangle, badge: "4", i18nKey: "nav.violations" },
+  { label: "Sustainability Reports", to: "/regulator/sustainability", icon: TreePine, i18nKey: "nav.sustainability" },
+  { label: "Protected Zones", to: "/regulator/zones", icon: Shield, i18nKey: "nav.zones" },
+  { label: "Audit Logs", to: "/regulator/audit-logs", icon: ScrollText, i18nKey: "nav.audit" },
+  { label: "Export Certifications", to: "/regulator/export-certifications", icon: FileCheck2, i18nKey: "nav.export" },
+  { label: "Compliance Analytics", to: "/regulator/compliance", icon: BarChart3, i18nKey: "nav.compliance" },
 ];
 
 function RegulatorDashboard() {
