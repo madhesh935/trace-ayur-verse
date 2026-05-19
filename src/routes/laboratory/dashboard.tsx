@@ -97,11 +97,7 @@ function LabDashboard() {
                 <XAxis dataKey="id" axisLine={false} tickLine={false} fontSize={10} />
                 <YAxis fontSize={10} />
                 <Tooltip />
-                <Bar dataKey="pct" radius={[6, 6, 0, 0]}>
-                  {moisture.map((m, i) => (
-                    <cell key={i} />
-                  ))}
-                </Bar>
+                <Bar dataKey="pct" radius={[6, 6, 0, 0]} fill="oklch(0.55 0.15 155)" />
               </BarChart>
             </ResponsiveContainer>
           </div>
