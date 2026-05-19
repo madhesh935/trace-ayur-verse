@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProcessingDashboardRouteImport } from './routes/processing/dashboard'
+import { Route as LaboratoryDashboardRouteImport } from './routes/laboratory/dashboard'
 import { Route as FarmerNewCollectionRouteImport } from './routes/farmer/new-collection'
 import { Route as FarmerDashboardRouteImport } from './routes/farmer/dashboard'
 import { Route as FarmerCollectionsRouteImport } from './routes/farmer/collections'
@@ -29,6 +30,11 @@ const IndexRoute = IndexRouteImport.update({
 const ProcessingDashboardRoute = ProcessingDashboardRouteImport.update({
   id: '/processing/dashboard',
   path: '/processing/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LaboratoryDashboardRoute = LaboratoryDashboardRouteImport.update({
+  id: '/laboratory/dashboard',
+  path: '/laboratory/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FarmerNewCollectionRoute = FarmerNewCollectionRouteImport.update({
@@ -53,6 +59,7 @@ export interface FileRoutesByFullPath {
   '/farmer/collections': typeof FarmerCollectionsRoute
   '/farmer/dashboard': typeof FarmerDashboardRoute
   '/farmer/new-collection': typeof FarmerNewCollectionRoute
+  '/laboratory/dashboard': typeof LaboratoryDashboardRoute
   '/processing/dashboard': typeof ProcessingDashboardRoute
 }
 export interface FileRoutesByTo {
@@ -61,6 +68,7 @@ export interface FileRoutesByTo {
   '/farmer/collections': typeof FarmerCollectionsRoute
   '/farmer/dashboard': typeof FarmerDashboardRoute
   '/farmer/new-collection': typeof FarmerNewCollectionRoute
+  '/laboratory/dashboard': typeof LaboratoryDashboardRoute
   '/processing/dashboard': typeof ProcessingDashboardRoute
 }
 export interface FileRoutesById {
@@ -70,6 +78,7 @@ export interface FileRoutesById {
   '/farmer/collections': typeof FarmerCollectionsRoute
   '/farmer/dashboard': typeof FarmerDashboardRoute
   '/farmer/new-collection': typeof FarmerNewCollectionRoute
+  '/laboratory/dashboard': typeof LaboratoryDashboardRoute
   '/processing/dashboard': typeof ProcessingDashboardRoute
 }
 export interface FileRouteTypes {
@@ -80,6 +89,7 @@ export interface FileRouteTypes {
     | '/farmer/collections'
     | '/farmer/dashboard'
     | '/farmer/new-collection'
+    | '/laboratory/dashboard'
     | '/processing/dashboard'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -88,6 +98,7 @@ export interface FileRouteTypes {
     | '/farmer/collections'
     | '/farmer/dashboard'
     | '/farmer/new-collection'
+    | '/laboratory/dashboard'
     | '/processing/dashboard'
   id:
     | '__root__'
@@ -96,6 +107,7 @@ export interface FileRouteTypes {
     | '/farmer/collections'
     | '/farmer/dashboard'
     | '/farmer/new-collection'
+    | '/laboratory/dashboard'
     | '/processing/dashboard'
   fileRoutesById: FileRoutesById
 }
@@ -105,6 +117,7 @@ export interface RootRouteChildren {
   FarmerCollectionsRoute: typeof FarmerCollectionsRoute
   FarmerDashboardRoute: typeof FarmerDashboardRoute
   FarmerNewCollectionRoute: typeof FarmerNewCollectionRoute
+  LaboratoryDashboardRoute: typeof LaboratoryDashboardRoute
   ProcessingDashboardRoute: typeof ProcessingDashboardRoute
 }
 
@@ -129,6 +142,13 @@ declare module '@tanstack/react-router' {
       path: '/processing/dashboard'
       fullPath: '/processing/dashboard'
       preLoaderRoute: typeof ProcessingDashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/laboratory/dashboard': {
+      id: '/laboratory/dashboard'
+      path: '/laboratory/dashboard'
+      fullPath: '/laboratory/dashboard'
+      preLoaderRoute: typeof LaboratoryDashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/farmer/new-collection': {
@@ -161,6 +181,7 @@ const rootRouteChildren: RootRouteChildren = {
   FarmerCollectionsRoute: FarmerCollectionsRoute,
   FarmerDashboardRoute: FarmerDashboardRoute,
   FarmerNewCollectionRoute: FarmerNewCollectionRoute,
+  LaboratoryDashboardRoute: LaboratoryDashboardRoute,
   ProcessingDashboardRoute: ProcessingDashboardRoute,
 }
 export const routeTree = rootRouteImport
