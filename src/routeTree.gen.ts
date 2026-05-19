@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as RegulatorDashboardRouteImport } from './routes/regulator/dashboard'
 import { Route as ProcessingDashboardRouteImport } from './routes/processing/dashboard'
 import { Route as LaboratoryDashboardRouteImport } from './routes/laboratory/dashboard'
 import { Route as FarmerNewCollectionRouteImport } from './routes/farmer/new-collection'
@@ -25,6 +26,11 @@ const LoginRoute = LoginRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RegulatorDashboardRoute = RegulatorDashboardRouteImport.update({
+  id: '/regulator/dashboard',
+  path: '/regulator/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProcessingDashboardRoute = ProcessingDashboardRouteImport.update({
@@ -61,6 +67,7 @@ export interface FileRoutesByFullPath {
   '/farmer/new-collection': typeof FarmerNewCollectionRoute
   '/laboratory/dashboard': typeof LaboratoryDashboardRoute
   '/processing/dashboard': typeof ProcessingDashboardRoute
+  '/regulator/dashboard': typeof RegulatorDashboardRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -70,6 +77,7 @@ export interface FileRoutesByTo {
   '/farmer/new-collection': typeof FarmerNewCollectionRoute
   '/laboratory/dashboard': typeof LaboratoryDashboardRoute
   '/processing/dashboard': typeof ProcessingDashboardRoute
+  '/regulator/dashboard': typeof RegulatorDashboardRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -80,6 +88,7 @@ export interface FileRoutesById {
   '/farmer/new-collection': typeof FarmerNewCollectionRoute
   '/laboratory/dashboard': typeof LaboratoryDashboardRoute
   '/processing/dashboard': typeof ProcessingDashboardRoute
+  '/regulator/dashboard': typeof RegulatorDashboardRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -91,6 +100,7 @@ export interface FileRouteTypes {
     | '/farmer/new-collection'
     | '/laboratory/dashboard'
     | '/processing/dashboard'
+    | '/regulator/dashboard'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -100,6 +110,7 @@ export interface FileRouteTypes {
     | '/farmer/new-collection'
     | '/laboratory/dashboard'
     | '/processing/dashboard'
+    | '/regulator/dashboard'
   id:
     | '__root__'
     | '/'
@@ -109,6 +120,7 @@ export interface FileRouteTypes {
     | '/farmer/new-collection'
     | '/laboratory/dashboard'
     | '/processing/dashboard'
+    | '/regulator/dashboard'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -119,6 +131,7 @@ export interface RootRouteChildren {
   FarmerNewCollectionRoute: typeof FarmerNewCollectionRoute
   LaboratoryDashboardRoute: typeof LaboratoryDashboardRoute
   ProcessingDashboardRoute: typeof ProcessingDashboardRoute
+  RegulatorDashboardRoute: typeof RegulatorDashboardRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -135,6 +148,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/regulator/dashboard': {
+      id: '/regulator/dashboard'
+      path: '/regulator/dashboard'
+      fullPath: '/regulator/dashboard'
+      preLoaderRoute: typeof RegulatorDashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/processing/dashboard': {
@@ -183,7 +203,18 @@ const rootRouteChildren: RootRouteChildren = {
   FarmerNewCollectionRoute: FarmerNewCollectionRoute,
   LaboratoryDashboardRoute: LaboratoryDashboardRoute,
   ProcessingDashboardRoute: ProcessingDashboardRoute,
+  RegulatorDashboardRoute: RegulatorDashboardRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
